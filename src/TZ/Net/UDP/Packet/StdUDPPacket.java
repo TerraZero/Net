@@ -45,6 +45,7 @@ public abstract class StdUDPPacket implements UDPPacket {
 		this.data = packet.getData();
 		this.ip = IP.getIPFromInetAddress(packet.getAddress());
 		this.port = packet.getPort();
+		this.length = packet.getLength();
 	}
 
 	public String getProtocol() {

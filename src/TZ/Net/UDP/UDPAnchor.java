@@ -2,9 +2,16 @@ package TZ.Net.UDP;
 
 import java.net.DatagramPacket;
 
-import TZ.Core.CoreObject;
-
-public interface UDPAnchor<socket> extends CoreObject {
+/**
+ * <strong>
+ *  TODO CoreObject einbauen
+ * </strong><br />
+ * 
+ * @author TerraZero
+ *
+ * @param <socket>
+ */
+public interface UDPAnchor<socket> {
 
 	public int send(byte[] data, String ip, int port);
 	

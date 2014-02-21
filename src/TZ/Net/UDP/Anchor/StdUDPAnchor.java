@@ -87,14 +87,6 @@ public class StdUDPAnchor implements UDPAnchor<DatagramSocket> {
 		this.socket.close();
 	}
 
-	public void coreRegistry() {
-		
-	}
-
-	public void coreDelete() {
-		this.unbind();
-	}
-
 	public int getBuffer() {
 		return this.buffer.length;
 	}

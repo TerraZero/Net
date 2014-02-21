@@ -3,29 +3,10 @@ package TZ.Net.UDP.Protocol;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import TZ.Listen.V5.L;
 import TZ.Net.UDP.Anchor.StdUDPAnchor;
 import TZ.Net.UDP.Packet.SimpleUDPPacket;
-import TZ.V5.Listen;
 
 public class SimpleUDPProtocol extends StdUDPProtocol<StdUDPAnchor, SimpleUDPPacket, DatagramSocket> implements Runnable {
-	
-	public static void main(String[] args) {
-		L<String> s = L.create();
-		s.add("hdfs");
-		Listen.print(s);
-//		SimpleUDPProtocol prot = new SimpleUDPProtocol();
-//		prot.addInputListener(new UDPListener<SimpleUDPPacket>() {
-//
-//			public boolean listen(SimpleUDPPacket packet) {
-//				System.out.println("Input:");
-//				System.out.println(packet.getString());
-//				return false;
-//			}
-//			
-//		});
-//		prot.send("hallo", "127.0.0.1", prot.getAnchor().getPort());
-	}
 	
 	public SimpleUDPProtocol() {
 		super(new StdUDPAnchor());
