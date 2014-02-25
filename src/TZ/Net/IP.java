@@ -1,6 +1,9 @@
 package TZ.Net;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import TZ.Core.Core;
 
 public class IP {
 	
@@ -25,6 +28,15 @@ public class IP {
 	
 	public static String getIPFromInetAddress(InetAddress address) {
 		return (address.toString() + "/").split("/")[1];
+	}
+	
+	public static InetAddress getInetAddressFromIP(String ip) {
+		try {
+			return InetAddress.getByName(ip);
+		} catch (UnknownHostException e) {
+			Core.exception(e, "IP: " + ip);
+			return null;
+		}
 	}
 	
 }
