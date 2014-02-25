@@ -11,6 +11,11 @@ import TZ.Listen.V5.L;
 import TZ.Net.IP;
 import TZ.Net.UDP.UDPProtocol;
 
+/**
+ * Base class for using DatagramSocket and DatagramPacket
+ * @author TerraZero
+ *
+ */
 public class DatagramAnchor extends StdAnchor<DatagramSocket, DatagramPacket> implements Runnable {
 	
 	protected DatagramPacket input;
@@ -62,12 +67,12 @@ public class DatagramAnchor extends StdAnchor<DatagramSocket, DatagramPacket> im
 	public void send(DatagramPacket data) throws IOException {
 		this.socket.send(data);
 	}
-
-	public DatagramPacket listening() throws IOException {
-		this.socket.receive(this.input);
-		return this.input;
-	}
 	
+	/**
+	 * Get a predefined Packet for sending
+	 * @return
+	 *   DatagramPacket - Packet for output
+	 */
 	public DatagramPacket getPacket() {
 		return this.output;
 	}
@@ -87,6 +92,13 @@ public class DatagramAnchor extends StdAnchor<DatagramSocket, DatagramPacket> im
 		}
 	}
 	
+	/**
+	 * Execute the Listening for protocols
+	 * @param input
+	 *   The DatagramPacket which is receives
+	 * @param timeout
+	 *   If is occurred cause a timeout
+	 */
 	public void listen(DatagramPacket input, boolean timeout) {
 		for (LNode<UDPProtocol<DatagramPacket>> n = this.protocols.root(); n != null; n = n.next()) {
 			if (n.content().listen(input, timeout)) break;

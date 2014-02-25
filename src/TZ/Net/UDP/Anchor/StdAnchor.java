@@ -5,6 +5,13 @@ import TZ.Listen.Liste.Liste;
 import TZ.Net.UDP.UDPAnchor;
 import TZ.Net.UDP.UDPProtocol;
 
+/**
+ * The default base class for UDPAnchor
+ * @author TerraZero
+ *
+ * @param <socket> The socket to connection with the Net
+ * @param <data> The connection data to UDPProtocols
+ */
 public abstract class StdAnchor<socket, data> implements UDPAnchor<socket, data> {
 	
 	protected socket socket;

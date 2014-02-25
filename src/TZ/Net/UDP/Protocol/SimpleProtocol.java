@@ -7,6 +7,11 @@ import TZ.Core.Core;
 import TZ.Net.UDP.UDPParser;
 import TZ.Net.UDP.Anchor.DatagramAnchor;
 
+/**
+ * A simple protocol more to test 
+ * @author TerraZero
+ *
+ */
 public class SimpleProtocol extends StdProtocol<DatagramPacket> {
 	
 	/**
