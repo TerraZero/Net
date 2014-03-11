@@ -1,6 +1,8 @@
 package TZ.Net.wo.UDP.Anchor;
 
 import TZ.Core.Core;
+import TZ.Listen.Reference.VL;
+import TZ.Listen.Reference.VarInit;
 import TZ.Net.wo.UDP.UDPAnchor;
 
 public abstract class StdUDPAnchor<socket, input, output> implements UDPAnchor<socket, input, output> {
@@ -27,7 +29,7 @@ public abstract class StdUDPAnchor<socket, input, output> implements UDPAnchor<s
 	}
 	
 	public void exception(Exception e, String id) {
-		Core.exception(e, id, "UDPAnchor");
+		Core.exception(e, id, "UDPAnchor", VL.create(VarInit.create(this).add("anchor")));
 	}
 
 }
