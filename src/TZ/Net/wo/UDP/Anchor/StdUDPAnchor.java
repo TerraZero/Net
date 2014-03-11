@@ -31,5 +31,13 @@ public abstract class StdUDPAnchor<socket, input, output> implements UDPAnchor<s
 	public void exception(Exception e, String id) {
 		Core.exception(e, id, "UDPAnchor", VL.create(VarInit.create(this).add("anchor")));
 	}
+	
+	public input alterInput(input input) {
+		return input;
+	}
+	
+	public output alterOutput(output output) {
+		return output;
+	}
 
 }

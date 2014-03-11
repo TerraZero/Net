@@ -16,4 +16,15 @@ public interface UDPProtocol<input, output> {
 	 */
 	public String getName();
 	
+	/**
+	 * Connect the protocol to the anchor
+	 * @param anchor
+	 *   The given anchor
+	 */
+	public void connectAnchor(UDPAnchor<?, input, output> anchor);
+	
+	public input alterInput(input input);
+	
+	public output alterOutput(output output);
+	
 }
