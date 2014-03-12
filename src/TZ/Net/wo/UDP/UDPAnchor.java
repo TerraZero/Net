@@ -1,5 +1,7 @@
 package TZ.Net.wo.UDP;
 
+import TZ.Listen.Reference.VarListe;
+
 /**
  * The base class for UDP Anchor
  * @author TerraZero
@@ -62,11 +64,19 @@ public interface UDPAnchor<socket, input, output> {
 	/**
 	 * The default exception handling for the running Thread
 	 * @param e
-	 *   The exception which is occurred
-	 * @param id
-	 *   A String which the the exception defined
+	 *  The given Exception<br />
+	 *  <i>default: null</i>
+	 * @param log
+	 *  The given log massage<br />
+	 *  <i>default: null</i>
+	 * @param modul
+	 *  The given CoreModule id<br />
+	 *  <i>default: null</i>
+	 * @param var 
+	 *  Given parameters for the exception<br />
+	 *  <i>default: null</i>
 	 */
-	public void exception(Exception e, String id);
+	public void exception(Exception e, String log, String modul, VarListe var);
 	
 	/**
 	 * Set the timeout of this Anchor
@@ -78,9 +88,10 @@ public interface UDPAnchor<socket, input, output> {
 	/**
 	 * Get the set Timeout
 	 * @return
-	 *   int - The timeout of the socket
+	 *   int - The timeout of the socket<br />
+	 *   -1 - Exception
 	 */
-	public void getTimeout();
+	public int getTimeout();
 	
 	/**
 	 * Create a new output packet
@@ -90,29 +101,41 @@ public interface UDPAnchor<socket, input, output> {
 	public output createPacket();
 	
 	/**
-	 * 
+	 * Received packet
 	 * @return
-	 * 	 <output> - the receive data<br />
-	 *   null - timeout
+	 *   1 - successful<br /> 
+	 *   0 - timeout<br />
+	 *   -1 - exception
 	 */
-	public output listen();
+	public int listen();
 	
 	/**
-	 * 
+	 * Get the packed which has just received
+	 * @return
+	 *   The received packet
+	 */
+	public input getInput();
+	
+	/**
+	 * Received packet
 	 * @param timeout
 	 *   Temporary timeout time
 	 * @return
-	 *   <output> - the receive data<br />
-	 *   null - timeout
+	 *   1 - successful<br /> 
+	 *   0 - timeout<br />
+	 *   -1 - exception
 	 */
-	public output listen(int timeout);
+	public int listen(int timeout);
 	
 	/**
 	 * Send the data over the socket
 	 * @param input
 	 *   The data to send
+	 * @return
+	 *   true - successful<br />
+	 *   false - exception
 	 */
-	public void send(input packet);
+	public boolean send(output packet);
 	
 	/**
 	 * Disconnect the socket
