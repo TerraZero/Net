@@ -10,7 +10,7 @@ import TZ.Listen.Reference.VL;
 import TZ.Listen.Reference.VarInit;
 import TZ.Net.IP;
 import TZ.Net.UDP.UDPParser;
-import TZ.V5.Strings;
+import TZ.V5.Strings.Strings;
 
 public class DatagramAnchor extends StdUDPAnchor<DatagramSocket, DatagramPacket, DatagramPacket> {
 	

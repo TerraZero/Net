@@ -12,6 +12,10 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 
 	protected AliasListe<String, String> header;
 	
+	public HeaderPacket() {
+		
+	}
+	
 	public HeaderPacket(DatagramPacket packet) {
 		this(packet.getData(), packet.getLength(), IP.getIPFromInetAddress(packet.getAddress()), packet.getPort());
 	}
@@ -23,7 +27,8 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 		this.port = port;
 	}
 	
-	public void header() {
+	public void generate() {
+		this.header = AL.create();
 		String[] content = new String(this.data, 0, this.length).split("§§");
 		if (content.length == 2) {
 			this.setHeader(content[0]);
@@ -31,17 +36,17 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	}
 	
 	public String header(String key) {
-		if (this.header == null) this.header();
+		if (this.header == null) this.generate();
 		return this.header.get(key);
 	}
 	
 	public void header(String key, String value) {
-		if (this.header == null) this.header = AL.create();
-		this.header.add(key, value);
+		if (this.header == null) this.generate();
+		this.header.as(key, value);
 	}
 	
 	public boolean isHeader(String key) {
-		if (this.header == null) this.header();
+		if (this.header == null) this.generate();
 		return this.header.isKey(key);
 	}
 	
@@ -57,6 +62,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	}
 	
 	protected String getHeader() {
+		if (this.header == null) this.generate();
 		StringBuilder string = new StringBuilder();
 		for (AliasNode<String, String> n = this.header.root(); n != null; n = n.next()) {
 			string.append(n.alias()).append(":").append(n.content()).append(";");
@@ -65,7 +71,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	}
 	
 	protected String getDataString() {
-		return this.getHeader() + "§§" + this.data;
+		return this.getHeader() + "§§" + new String(this.data, 0, this.data.length);
 	}
 	
 	public DatagramPacket getPacket(DatagramPacket packet) {

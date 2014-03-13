@@ -152,6 +152,8 @@ public interface UDPAnchor<socket, input, output> {
 	 */
 	public boolean isConnected();
 	
+	public output getPacket();
+	
 	public input alterInput(input input);
 	
 	public output alterOutput(output output);
