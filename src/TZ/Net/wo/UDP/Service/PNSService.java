@@ -128,71 +128,87 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 		}
 	}
 	
-	protected void pns(DataPacket data, DataPacket output) {
+	protected String pns(DataPacket data, DataPacket output) {
 		String pns = data.content("pns");
+		String name = data.content("name");
+		String port = data.content("port");
+		String rename = data.content("rename");
 		switch (pns) {
 			case "login" :
 				if (data.getIP().equals("127.0.0.1")) {
-					String name = data.content("name");
-					String port = data.content("port");
-					output = this.preparePNS(output, data.getAddress(), pns, name, port);
+					output.setAddress(data.getAddress());
 					if (name == null || port == null) {
-						output = this.prepareHeader(output, "null", "abort");
+						this.prepareHeader(output, "null", "abort");
 					} else if (this.system.isKey(name)) {
-						output = this.prepareHeader(output, "already", "abort");
+						this.prepareHeader(output, "already", "abort");
 					} else {
 						this.system.add(name, port);
-						output = this.prepareHeader(output, null, "executed");
+						this.prepareHeader(output, null, "executed");
 					}
 				}
 				break;
 			case "logout" :
 				if (data.getIP().equals("127.0.0.1")) {
-					String name = data.content("name");
-					output = this.preparePNS(output, data.getAddress(), pns, name, null);
+					output.setAddress(data.getAddress());
 					if (name == null) {
-						output = this.prepareHeader(output, "null", "abort");
+						this.prepareHeader(output, "null", "abort");
 					} else {
-						String port = this.system.get(name);
+						port = this.system.get(name);
 						if (port == null) {
-							output = this.prepareHeader(output, "null", "abort");
+							this.prepareHeader(output, "null", "abort");
 						} else {
-							output.content("port", port);
-							output = this.prepareHeader(output, null, "executed");
+							this.prepareHeader(output, null, "executed");
 						}
 					}
 				}
 				break;
 			case "clear" :
 				if (data.getIP().equals("127.0.0.1")) {
-					output = this.preparePNS(output, data.getAddress(), pns, null, null);
-					output = this.prepareHeader(output, null, "executed");
+					output.setAddress(data.getAddress());
+					this.prepareHeader(output, null, "executed");
 					this.system.clear();
 				}
 				break;
 			case "port" :
-				String name = data.content("name");
-				output = this.preparePNS(output, data.getAddress(), pns, name, null);
+				output.setAddress(data.getAddress());
 				if (name == null) {
-					output = this.prepareHeader(output, "null", "abort");
+					this.prepareHeader(output, "null", "abort");
 				} else {
-					String port = this.system.get(name);
+					port = this.system.get(name);
 					if (port == null) {
-						output = this.prepareHeader(output, "exist", "abort");
+						this.prepareHeader(output, "exist", "abort");
 					} else {
-						output.content("port", port);
-						output = this.prepareHeader(output, null, "executed");
+						this.prepareHeader(output, null, "executed");
 					}
 				}
 				break;
+			case "rename" :
+				if (data.getIP().equals("127.0.0.1")) {
+					output.setAddress(data.getAddress());
+					if (rename == null || name == null) {
+						this.prepareHeader(output, "null", "abort");
+					} else if (this.system.isKey(rename)) {
+						this.prepareHeader(output, "already", "abort");
+					} else if (!this.system.isKey(name)) {
+						this.prepareHeader(output, "exist", "abort");
+					} else {
+						if (this.system.rename(name, rename)) {
+							this.prepareHeader(output, null, "executed");
+						} else {
+							this.prepareHeader(output, "exception", "abort");
+						}
+					}
+				}
 			default :
 				break;
 		}
+		this.preparePNS(output, pns, name, port, rename);
 		if (output.getIP() != null) {
 			if (!this.sending(output, "y")) {
 				this.trigger("exception", "pns", output.getIP(), output.getPort() + "", "sending", "Failure set send!");
 			}
 		}
+		return "y";
 	}
 	
 	protected DataPacket prepareHeader(DataPacket packet, String exception, String action) {
@@ -215,11 +231,11 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 		return packet;
 	}
 	
-	protected DataPacket preparePNS(DataPacket packet, String address, String pns, String name, String port) {
-		packet.setAddress(address);
+	protected DataPacket preparePNS(DataPacket packet, String pns, String name, String port, String rename) {
 		packet.content("pns", pns);
 		if (name != null) packet.content("name", name);
 		if (port != null) packet.content("port", port);
+		if (rename != null) packet.content("rename", rename);
 		return packet;
 	}
 	

@@ -18,12 +18,16 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		System.out.println(prot.query("buffer"));
 		System.out.println(prot.set("buffer", "3555"));
 		System.out.println(prot.query("buffer"));
-		prot.pns("login", "hallo", "51234");
-		prot.pns("port", "hallo", null);
-		prot.pns("port", "dshfjsf", null);
-		prot.pns("login", "hallo", "85479");
-		prot.pns("clear", null, null);
-		prot.pns("port", "hallo", null);
+		prot.pns("login", "hallo", "51234", null);
+		prot.pns("port", "hallo", null, null);
+		prot.pns("port", "dshfjsf", null, null);
+		prot.pns("login", "hallo", "85479", null);
+		prot.pns("clear", null, null, null);
+		prot.pns("port", "hallo", null, null);
+		prot.pns("login", "hallo", "55555", "test");
+		prot.pns("rename", "hallo", null, "huhu");
+		prot.pns("port", "huhu", null, null);
+		prot.pns("port", "hallo", null, null);
 		System.out.println("Exit: " + prot.exit());
 	}
 	
@@ -111,11 +115,12 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		}
 	}
 	
-	public String pns(String pns, String name, String port) {
+	public String pns(String pns, String name, String port, String rename) {
 		DataPacket output = this.createDataPacket("pns");
 		output.content("pns", pns);
 		if (name != null) output.content("name", name);
 		if (port != null) output.content("port", port);
+		if (rename != null) output.content("rename", rename);
 		if (!this.sending(output)) {
 			return PNSProtocol.NO_SEND;
 		}
