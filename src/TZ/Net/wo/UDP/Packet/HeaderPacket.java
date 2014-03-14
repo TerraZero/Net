@@ -29,9 +29,12 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	
 	public void generate() {
 		this.header = AL.create();
-		String[] content = new String(this.data, 0, this.length).split("§§");
+		String s = new String(this.data, 0, this.length);
+		String[] content = s.split("§§");
 		if (content.length == 2) {
 			this.setHeader(content[0]);
+		} else if (content.length == 1 && s.endsWith("§§")) {
+			this.setHeader(s.substring(0, s.length() - 2));
 		}
 	}
 	

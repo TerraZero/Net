@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import TZ.Listen.Alias.AliasListe;
 import TZ.Listen.Alias.AliasNode;
 import TZ.Listen.V5.AL;
+import TZ.Net.wo.UDP.UDPPacket;
 
 public class DataPacket extends HeaderPacket {
 	
@@ -30,10 +31,13 @@ public class DataPacket extends HeaderPacket {
 		this.header = AL.create();
 		this.content = AL.create();
 		if (this.data == null) return;
-		String[] content = new String(this.data, 0, this.length).split("§§");
+		String s = new String(this.data, 0, this.length);
+		String[] content = s.split("§§");
 		if (content.length == 2) {
 			this.setHeader(content[0]);
 			this.setContent(content[1]);
+		} else if (content.length == 1 && s.endsWith("§§")) {
+			this.setHeader(s.substring(0, s.length() - 2));
 		}
 	}
 	
@@ -74,6 +78,11 @@ public class DataPacket extends HeaderPacket {
 	
 	protected String getDataString() {
 		return this.getHeader() + "§§" + this.getContent();
+	}
+	
+	public UDPPacket clear() {
+		this.header.clear();
+		return super.clear();
 	}
 
 }
