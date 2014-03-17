@@ -18,16 +18,16 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		System.out.println(prot.query("buffer"));
 		System.out.println(prot.set("buffer", "3555"));
 		System.out.println(prot.query("buffer"));
-		prot.pns("login", "hallo", "51234", null);
-		prot.pns("port", "hallo", null, null);
-		prot.pns("port", "dshfjsf", null, null);
-		prot.pns("login", "hallo", "85479", null);
-		prot.pns("clear", null, null, null);
-		prot.pns("port", "hallo", null, null);
-		prot.pns("login", "hallo", "55555", "test");
-		prot.pns("rename", "hallo", null, "huhu");
-		prot.pns("port", "huhu", null, null);
-		prot.pns("port", "hallo", null, null);
+		System.out.println(prot.pns("login", "hallo", "51234", null));
+		System.out.println(prot.pns("port", "hallo", null, null));
+		System.out.println(prot.pns("port", "dshfjsf", null, null));
+		System.out.println(prot.pns("login", "hallo", "85479", null));
+		System.out.println(prot.pns("clear", null, null, null));
+		System.out.println(prot.pns("port", "hallo", null, null));
+		System.out.println(prot.pns("login", "hallo", "55555", "test"));
+		System.out.println(prot.pns("rename", "hallo", null, "huhu"));
+		System.out.println(prot.pns("port", "huhu", null, null));
+		System.out.println(prot.pns("port", "hallo", null, null));
 		System.out.println("Exit: " + prot.exit());
 	}
 	
@@ -53,7 +53,7 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		return packet;
 	}
 	
-	protected DataPacket getInputData() {
+	public DataPacket getInputData() {
 		return new DataPacket(this.alterInput(this.anchor.getInput()));
 	}
 	
@@ -63,14 +63,7 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		if (!this.sending(output)) {
 			return PNSProtocol.NO_SEND;
 		}
-		int state = this.anchor.listen();
-		if (state == 1) {
-			return this.getInputData().content("value");
-		} else if (state == 0) {
-			return PNSProtocol.TIMEOUT;
-		} else {
-			return null;
-		}
+		return this.getReturn(this.anchor.listen());
 	}
 	
 	public String exit() {
@@ -80,22 +73,7 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		if (!this.sending(output)) {
 			return PNSProtocol.NO_SEND;
 		}
-		int state = this.anchor.listen();
-		if (state == 1) {
-			DataPacket input = this.getInputData();
-			if (input.header("action").equals("abort")) {
-				if (input.isHeader("exception")) {
-					return input.header("exception");
-				} else {
-					return "abort";
-				}
-			}
-			return "exit";
-		} else if (state == 0) {
-			return PNSProtocol.TIMEOUT;
-		} else {
-			return null;
-		}
+		return this.getReturn(this.anchor.listen());
 	}
 	
 	public String set(String set, String value) {
@@ -105,14 +83,7 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		if (!this.sending(output)) {
 			return PNSProtocol.NO_SEND;
 		}
-		int state = this.anchor.listen();
-		if (state == 1) {
-			return this.getInputData().content("value");
-		} else if (state == 0) {
-			return PNSProtocol.NO_SEND;
-		} else {
-			return null;
-		}
+		return this.getReturn(this.anchor.listen());
 	}
 	
 	public String pns(String pns, String name, String port, String rename) {
@@ -124,39 +95,30 @@ public class PNSProtocol extends StdUDPProtocol<DatagramPacket, DatagramPacket> 
 		if (!this.sending(output)) {
 			return PNSProtocol.NO_SEND;
 		}
-		int state = this.anchor.listen();
-		System.out.println(this.getInputData());
-		return null;
+		return this.getReturn(this.anchor.listen());
 	}
-	
-	/*
-	public int check() {
-		
-	}
-	
-	public int regist(string name, int port) {
-		
-	}
-	
-	public int deregist(string name) {
-		
-	}
-	
-	public string[] getregists() {
-		
-	}
-	
-	public int[] getports() {
-		
-	}
-	
-	public int sendover() {
-		
-	}
-	*/
 	
 	protected boolean sending(HeaderPacket hp) {
 		return this.anchor.send(this.alterOutput(hp.getPacket(this.anchor.getPacket())));
+	}
+	
+	protected String getReturn(int state) {
+		if (state == 1) {
+			DataPacket data = this.getInputData();
+			if (data.isHeader("action") && !data.header("action").equals("executed") && !data.header("action").equals("auto")) {
+				return data.header("exception");
+			} else {
+				return data.content("respond");
+			}
+		} else if (state == 0) {
+			return PNSProtocol.TIMEOUT;
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean isStateOK(String respond) {
+		return respond != null && !respond.equals(PNSProtocol.NO_SEND) && !respond.equals(PNSProtocol.TIMEOUT);
 	}
 	
 }

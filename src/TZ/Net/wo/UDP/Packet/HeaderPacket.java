@@ -9,11 +9,17 @@ import TZ.Net.IP;
 import TZ.Net.wo.UDP.UDPPacket;
 
 public class HeaderPacket extends UDPP implements UDPPacket {
+	
+	public static final String TYPE = "UDPHP";
 
 	protected AliasListe<String, String> header;
 	
 	public HeaderPacket() {
-		
+		this(HeaderPacket.TYPE);
+	}
+	
+	protected HeaderPacket(String type) {
+		this.header("type", type);
 	}
 	
 	public HeaderPacket(DatagramPacket packet) {
@@ -28,6 +34,10 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	}
 	
 	public void generate() {
+		this.generateParse();
+	}
+	
+	public void generateParse() {
 		this.header = AL.create();
 		String s = new String(this.data, 0, this.length);
 		String[] content = s.split("§§");
@@ -35,6 +45,8 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 			this.setHeader(content[0]);
 		} else if (content.length == 1 && s.endsWith("§§")) {
 			this.setHeader(s.substring(0, s.length() - 2));
+		} else {
+			this.header("type", HeaderPacket.TYPE);
 		}
 	}
 	
@@ -50,7 +62,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	
 	public boolean isHeader(String key) {
 		if (this.header == null) this.generate();
-		return this.header.isKey(key);
+		return this.header.isKey(key) && this.header.get(key) != null;
 	}
 	
 	protected void setHeader(String header) {

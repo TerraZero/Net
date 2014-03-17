@@ -45,6 +45,7 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 						this.daemon.interrupt();
 						output.setAddress(data.getAddress());
 						output.content(command, "ok");
+						this.respond(output, "exit");
 						this.prepareHeader(output, null, "executed");
 						this.sending(output, "y");
 						System.exit(0);
@@ -81,10 +82,10 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 		String query = data.content("query");
 		switch (query) {
 			case "buffer" :
-				output = this.prepareQuery(output, data.getAddress(), query, this.anchor.getBuffer() + "");
+				this.prepareQuery(output, data.getAddress(), query, this.anchor.getBuffer() + "");
 				break;
 			case "timeout" :
-				output = this.prepareQuery(output, data.getAddress(), query, this.anchor.getTimeout() + "");
+				this.prepareQuery(output, data.getAddress(), query, this.anchor.getTimeout() + "");
 				break;
 			default :
 				
@@ -104,7 +105,7 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 				try {
 					int buffer = Integer.parseInt(data.content("value"));
 					this.anchor.setBuffer(buffer);
-					output = this.prepareSet(output, data.getAddress(), set, buffer + "");
+					this.prepareSet(output, data.getAddress(), set, buffer + "");
 				} catch (NumberFormatException e) {
 					this.trigger("exception", "set", "null", "-1", "parseInt", e.toString());
 				}
@@ -113,7 +114,7 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 				try {
 					int timeout = Integer.parseInt(data.content("value"));
 					this.anchor.setTimeout(timeout);
-					output = this.prepareSet(output, data.getAddress(), set, timeout + "");
+					this.prepareSet(output, data.getAddress(), set, timeout + "");
 				} catch (NumberFormatException e) {
 					this.trigger("exception", "set", "null", "-1", "parseInt", e.toString());
 				}
@@ -137,6 +138,7 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 			case "login" :
 				if (data.getIP().equals("127.0.0.1")) {
 					output.setAddress(data.getAddress());
+					this.respond(output, name + ":" + port);
 					if (name == null || port == null) {
 						this.prepareHeader(output, "null", "abort");
 					} else if (this.system.isKey(name)) {
@@ -150,6 +152,7 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 			case "logout" :
 				if (data.getIP().equals("127.0.0.1")) {
 					output.setAddress(data.getAddress());
+					this.respond(output, name + ":" + port);
 					if (name == null) {
 						this.prepareHeader(output, "null", "abort");
 					} else {
@@ -165,12 +168,14 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 			case "clear" :
 				if (data.getIP().equals("127.0.0.1")) {
 					output.setAddress(data.getAddress());
+					this.respond(output, "clear");
 					this.prepareHeader(output, null, "executed");
 					this.system.clear();
 				}
 				break;
 			case "port" :
 				output.setAddress(data.getAddress());
+				this.respond(output, port);
 				if (name == null) {
 					this.prepareHeader(output, "null", "abort");
 				} else {
@@ -185,6 +190,7 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 			case "rename" :
 				if (data.getIP().equals("127.0.0.1")) {
 					output.setAddress(data.getAddress());
+					this.respond(output, rename);
 					if (rename == null || name == null) {
 						this.prepareHeader(output, "null", "abort");
 					} else if (this.system.isKey(rename)) {
@@ -217,17 +223,17 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 		return packet;
 	}
 	
-	protected DataPacket prepareSet(DataPacket packet, String address, String set, String value) {
+	protected DataPacket prepareSet(DataPacket packet, String address, String set, String respond) {
 		packet.setAddress(address);
 		packet.content("set", set);
-		packet.content("value", value);
+		this.respond(packet, respond);
 		return packet;
 	}
 	
-	protected DataPacket prepareQuery(DataPacket packet, String address, String query, String value) {
+	protected DataPacket prepareQuery(DataPacket packet, String address, String query, String respond) {
 		packet.setAddress(address);
 		packet.content("query", query);
-		packet.content("value", value);
+		this.respond(packet, respond);
 		return packet;
 	}
 	
@@ -243,6 +249,11 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 		packet.header("reply", reply);
 		if (!packet.isHeader("action")) packet.header("action", "auto");
 		return this.anchor.send(packet.getPacket(this.anchor.getPacket()));
+	}
+	
+	protected DataPacket respond(DataPacket output, String respond) {
+		output.content("respond", respond);
+		return output;
 	}
 	
 	protected void trigger(String type, String function, String ip, String port, String action, String message, String... args) {

@@ -9,10 +9,12 @@ import TZ.Net.wo.UDP.UDPPacket;
 
 public class DataPacket extends HeaderPacket {
 	
+	public static final String TYPE = "UDPDP";
+	
 	protected AliasListe<String, String> content;
 	
 	public DataPacket() {
-		super();
+		super(DataPacket.TYPE);
 	}
 
 	public DataPacket(DatagramPacket packet) {
@@ -27,7 +29,7 @@ public class DataPacket extends HeaderPacket {
 		super(packet.data, packet.length, packet.ip, packet.port);
 	}
 	
-	public void generate() {
+	public void generateParse() {
 		this.header = AL.create();
 		this.content = AL.create();
 		if (this.data == null) return;
@@ -38,6 +40,8 @@ public class DataPacket extends HeaderPacket {
 			this.setContent(content[1]);
 		} else if (content.length == 1 && s.endsWith("§§")) {
 			this.setHeader(s.substring(0, s.length() - 2));
+		} else {
+			this.header("type", DataPacket.TYPE);
 		}
 	}
 	
@@ -64,7 +68,7 @@ public class DataPacket extends HeaderPacket {
 	
 	public boolean isContent(String key) {
 		if (this.content == null) this.generate();
-		return this.content.isKey(key);
+		return this.content.isKey(key) && this.content.get(key) != null;
 	}
 	
 	protected String getContent() {
