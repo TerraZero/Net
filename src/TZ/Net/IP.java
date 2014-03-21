@@ -46,7 +46,7 @@ public class IP {
 	 * Get String IP from address String
 	 * @param address
 	 *   The address String<br />
-	 *   <i>format: ip:port - 127.0.0.1:55555</i>ssss
+	 *   <i>format: ip:port - 127.0.0.1:55555</i>sssss
 	 * @return
 	 *   String - The String IP
 	 */
