@@ -37,11 +37,12 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 		DataPacket data = new DataPacket(this.anchor.getInput());
 		DataPacket output = new DataPacket();
 		String command = data.header("cmd");
+		String reply = null;
 		if (command != null) {
 			output.header("function", command);
 			switch (command) {
 				case "exit" :
-					if (data.getIP().equals("127.0.0.1")) {
+					if (this.authorized(data)) {
 						this.daemon.interrupt();
 						output.setAddress(data.getAddress());
 						output.content(command, "ok");
@@ -57,28 +58,38 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 					}
 					break;
 				case "set" :
-					if (data.getIP().equals("127.0.0.1")) {
-						this.set(data, output);
-					}
+					if (this.authorized(data)) reply = this.set(data, output);
 					break;
 				case "query" :
-					this.query(data, output);
+					reply = this.query(data, output);
 					break;
 				case "pns" :
-					this.pns(data, output);
+					reply = this.pns(data, output);
+					break;
+				case "trigger" :
+					reply = this.trigger(data, output);
 					break;
 				case "check" :
 					output.content(command, "ok");
 					output.setAddress(data.getAddress());
-					this.sending(output, "y");
+					reply = "y";
 					break;
 				default :
 					break;
 			}
 		}
+		if (reply != null && output.getIP() != null) {
+			if (this.sending(output, reply)) {
+				this.trigger("exception", command, output.getIP(), output.getPort() + "", "sending", "Failure '" + command + "' send!");
+			}
+		}
 	}
 	
-	protected void query(DataPacket data, DataPacket output) {
+	protected boolean authorized(DataPacket packet) {
+		return packet.getIP().equals("127.0.0.1");
+	}
+	
+	protected String query(DataPacket data, DataPacket output) {
 		String query = data.content("query");
 		switch (query) {
 			case "buffer" :
@@ -88,17 +99,12 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 				this.prepareQuery(output, data.getAddress(), query, this.anchor.getTimeout() + "");
 				break;
 			default :
-				
-				break;
+				return null;
 		}
-		if (output.getIP() != null) {
-			if (!this.sending(output, "y")) {
-				this.trigger("exception", "query", output.getIP(), output.getPort() + "", "sending", "Failure query send!");
-			}
-		}
+		return "y";
 	}
 	
-	protected void set(DataPacket data, DataPacket output) {
+	protected String set(DataPacket data, DataPacket output) {
 		String set = data.content("set");
 		switch (set) {
 			case "buffer" :
@@ -120,13 +126,9 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 				}
 				break;
 			default :
-				break;
+				return null;
 		}
-		if (output.getIP() != null) {
-			if (!this.sending(output, "y")) {
-				this.trigger("exception", "set", output.getIP(), output.getPort() + "", "sending", "Failure set send!");
-			}
-		}
+		return "y";
 	}
 	
 	protected String pns(DataPacket data, DataPacket output) {
@@ -206,15 +208,14 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 					}
 				}
 			default :
-				break;
+				return null;
 		}
 		this.preparePNS(output, pns, name, port, rename);
-		if (output.getIP() != null) {
-			if (!this.sending(output, "y")) {
-				this.trigger("exception", "pns", output.getIP(), output.getPort() + "", "sending", "Failure set send!");
-			}
-		}
 		return "y";
+	}
+	
+	protected String trigger(DataPacket data, DataPacket output) {
+		return "";
 	}
 	
 	protected DataPacket prepareHeader(DataPacket packet, String exception, String action) {
