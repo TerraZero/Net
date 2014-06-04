@@ -6,8 +6,8 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import TZ.Listen.Liste.LNode;
-import TZ.Listen.V5.L;
+import TZ.Listen.Liste.LN;
+import TZ.Listen.V5.Liste;
 import TZ.Net.IP;
 import TZ.Net.UDP.UDPProtocol;
 
@@ -38,7 +38,7 @@ public class DatagramAnchor extends StdAnchor<DatagramSocket, DatagramPacket> im
 		this.setBuffer(buffer);
 		this.socket.setSoTimeout(timeout);
 		this.thread = new Thread(this);
-		this.protocols = L.create();
+		this.protocols = Liste.create();
 		this.refreshData();
 	}
 	
@@ -100,7 +100,7 @@ public class DatagramAnchor extends StdAnchor<DatagramSocket, DatagramPacket> im
 	 *   If is occurred cause a timeout
 	 */
 	public void listen(DatagramPacket input, boolean timeout) {
-		for (LNode<UDPProtocol<DatagramPacket>> n = this.protocols.root(); n != null; n = n.next()) {
+		for (LN<UDPProtocol<DatagramPacket>> n = this.protocols.root(); n != null; n = n.next()) {
 			if (n.content().listen(input, timeout)) break;
 		}
 	}

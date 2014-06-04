@@ -2,8 +2,8 @@ package TZ.Net.wo.UDP.Service;
 
 import java.net.DatagramPacket;
 
-import TZ.Listen.Alias.AliasListe;
-import TZ.Listen.V5.AL;
+import TZ.Listen.Alias.AL;
+import TZ.Listen.V5.AliasListe;
 import TZ.Net.wo.UDP.Anchor.DatagramAnchor;
 import TZ.Net.wo.UDP.Packet.DataPacket;
 import TZ.V5.Strings.VarString;
@@ -12,14 +12,14 @@ public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 	
 	public static final int PORT = 53197;
 	
-	protected AliasListe<String, String> system;
+	protected AL<String, String> system;
 	
 	public PNSService() {
 		this.name = "PNS - Service";
 		this.protocol = "PNS";
 		this.connectAnchor(new DatagramAnchor(PNSService.PORT, 2048));
 		this.anchor.setTimeout(30);
-		this.system = AL.create();
+		this.system = AliasListe.create();
 	}
 
 	public void daemon() {

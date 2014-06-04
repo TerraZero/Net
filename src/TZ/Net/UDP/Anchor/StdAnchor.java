@@ -1,7 +1,7 @@
 package TZ.Net.UDP.Anchor;
 
 import TZ.Core.Core;
-import TZ.Listen.Liste.Liste;
+import TZ.Listen.Liste.L;
 import TZ.Net.UDP.UDPAnchor;
 import TZ.Net.UDP.UDPProtocol;
 
@@ -16,7 +16,7 @@ public abstract class StdAnchor<socket, data> implements UDPAnchor<socket, data>
 	
 	protected socket socket;
 	
-	protected Liste<UDPProtocol<data>> protocols;
+	protected L<UDPProtocol<data>> protocols;
 	protected Thread thread;
 	
 	protected byte[] buffer;
@@ -27,7 +27,7 @@ public abstract class StdAnchor<socket, data> implements UDPAnchor<socket, data>
 		this.protocols.add(protocol);
 	}
 
-	public Liste<UDPProtocol<data>> getProtocols() {
+	public L<UDPProtocol<data>> getProtocols() {
 		return this.protocols;
 	}
 

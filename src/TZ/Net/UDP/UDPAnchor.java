@@ -3,7 +3,7 @@ package TZ.Net.UDP;
 import java.io.IOException;
 import java.net.SocketException;
 
-import TZ.Listen.Liste.Liste;
+import TZ.Listen.Liste.L;
 
 /**
  * The base class for UDP Anchor
@@ -26,7 +26,7 @@ public interface UDPAnchor<socket, data> {
 	 * @return
 	 *   List(UDPProtocol)
 	 */
-	public Liste<UDPProtocol<data>> getProtocols();
+	public L<UDPProtocol<data>> getProtocols();
 	
 	/**
 	 * Set the buffer of the socket

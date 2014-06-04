@@ -2,9 +2,9 @@ package TZ.Net.wo.UDP.Packet;
 
 import java.net.DatagramPacket;
 
-import TZ.Listen.Alias.AliasListe;
-import TZ.Listen.Alias.AliasNode;
-import TZ.Listen.V5.AL;
+import TZ.Listen.Alias.AL;
+import TZ.Listen.Alias.AN;
+import TZ.Listen.V5.AliasListe;
 import TZ.Net.IP;
 import TZ.Net.wo.UDP.UDPPacket;
 
@@ -12,7 +12,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	
 	public static final String TYPE = "UDPHP";
 
-	protected AliasListe<String, String> header;
+	protected AL<String, String> header;
 	
 	public HeaderPacket() {
 		this(HeaderPacket.TYPE);
@@ -38,7 +38,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	}
 	
 	public void generateParse() {
-		this.header = AL.create();
+		this.header = AliasListe.create();
 		String s = new String(this.data, 0, this.length);
 		String[] content = s.split("§§");
 		if (content.length == 2) {
@@ -79,7 +79,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	protected String getHeader() {
 		if (this.header == null) this.generate();
 		StringBuilder string = new StringBuilder();
-		for (AliasNode<String, String> n = this.header.root(); n != null; n = n.next()) {
+		for (AN<String, String> n = this.header.root(); n != null; n = n.next()) {
 			string.append(n.alias()).append(":").append(n.content()).append(";");
 		}
 		return string.toString();

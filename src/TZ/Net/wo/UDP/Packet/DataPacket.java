@@ -2,16 +2,16 @@ package TZ.Net.wo.UDP.Packet;
 
 import java.net.DatagramPacket;
 
-import TZ.Listen.Alias.AliasListe;
-import TZ.Listen.Alias.AliasNode;
-import TZ.Listen.V5.AL;
+import TZ.Listen.Alias.AL;
+import TZ.Listen.Alias.AN;
+import TZ.Listen.V5.AliasListe;
 import TZ.Net.wo.UDP.UDPPacket;
 
 public class DataPacket extends HeaderPacket {
 	
 	public static final String TYPE = "UDPDP";
 	
-	protected AliasListe<String, String> content;
+	protected AL<String, String> content;
 	
 	public DataPacket() {
 		super(DataPacket.TYPE);
@@ -30,8 +30,8 @@ public class DataPacket extends HeaderPacket {
 	}
 	
 	public void generateParse() {
-		this.header = AL.create();
-		this.content = AL.create();
+		this.header = AliasListe.create();
+		this.content = AliasListe.create();
 		if (this.data == null) return;
 		String s = new String(this.data, 0, this.length);
 		String[] content = s.split("§§");
@@ -74,7 +74,7 @@ public class DataPacket extends HeaderPacket {
 	protected String getContent() {
 		if (this.content == null) this.generate();
 		StringBuilder string = new StringBuilder();
-		for (AliasNode<String, String> n = this.content.root(); n != null; n = n.next()) {
+		for (AN<String, String> n = this.content.root(); n != null; n = n.next()) {
 			string.append(n.alias()).append(":").append(n.content()).append(";");
 		}
 		return string.toString();
