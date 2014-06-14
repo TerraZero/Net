@@ -1,9 +1,14 @@
 package TZ.Net;
 
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import TZ.Core.Core;
+import TZ.V5.Bytes;
 
 /**
  * Includes common IP functions
@@ -11,6 +16,98 @@ import TZ.Core.Core;
  *
  */
 public class IP {
+	
+	private static String ip;
+	private static String mac;
+	private static String mask;
+	private static String broadcast;
+	
+	public static String getIP() {
+		if (IP.ip == null) {
+			try {
+				IP.ip = InetAddress.getLocalHost().toString().split("/")[1];
+			} catch (UnknownHostException e) {
+				Core.exception(e, "Cannot create ip", "IP");
+			}
+		}
+		return IP.ip;
+	}
+	
+	public static String getMAC() {
+		if (IP.mac == null) {
+			try {
+				NetworkInterface network = NetworkInterface.getByInetAddress(Inet4Address.getLocalHost());
+				byte[] mac = network.getHardwareAddress();
+				String macaddress = "";
+				for (int i = 0; i < mac.length; i++) {
+					macaddress += String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : "");
+				}
+				IP.mac = macaddress;
+			} catch (SocketException | UnknownHostException e) {
+				Core.exception(e, "Cannot create MAC", "IP");
+			}
+		}
+		return IP.mac;
+	}
+	
+	public static String getMask() {
+		if (IP.mask == null) {
+			try {
+				NetworkInterface network = NetworkInterface.getByInetAddress(Inet4Address.getLocalHost());
+				InterfaceAddress address = null;
+				for (InterfaceAddress add : network.getInterfaceAddresses()) {
+					if (add != null) {
+						address = add;
+						break;
+					}
+				}
+				IP.broadcast = address.getBroadcast().toString().split("/")[1];
+				IP.mask = IP.parsePrefix(address.getNetworkPrefixLength());
+			} catch (SocketException | UnknownHostException e) {
+				Core.exception(e, "Cannot create Mask", "IP");
+			}
+		}
+		return IP.mask;
+	}
+	
+	public static String getBroadcast() {
+		if (IP.broadcast == null) {
+			try {
+				NetworkInterface network = NetworkInterface.getByInetAddress(Inet4Address.getLocalHost());
+				InterfaceAddress address = null;
+				for (InterfaceAddress add : network.getInterfaceAddresses()) {
+					if (add != null) {
+						address = add;
+						break;
+					}
+				}
+				IP.broadcast = address.getBroadcast().toString().split("/")[1];
+				IP.mask = IP.parsePrefix(address.getNetworkPrefixLength());
+			} catch (SocketException | UnknownHostException e) {
+				Core.exception(e, "Cannot create Broadcast", "IP");
+			}
+		}
+		return IP.broadcast;
+	}
+	
+	public static String parsePrefix(int prefix) {
+		int bytes = prefix / 8;
+		int endbyte = prefix % 8;
+		StringBuilder ip = new StringBuilder();
+		for (int i = 0; i < 4; i++) {
+			if (bytes > i) {
+				ip.append("255");
+			} else if (bytes == i && endbyte != 0) {
+				ip.append(Integer.parseInt(Bytes.getByte(endbyte), 2));
+			} else {
+				ip.append("0");
+			}
+			if (i != 3) {
+				ip.append(".");
+			}
+		}
+		return ip.toString();
+	}
 	
 	/**
 	 * Convert a InetAddress in a String IP
