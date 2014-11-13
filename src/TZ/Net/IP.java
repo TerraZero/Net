@@ -7,8 +7,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import TZ.Base.V5.Bytes;
 import TZ.Core.Core;
-import TZ.V5.Bytes;
 
 /**
  * Includes common IP functions

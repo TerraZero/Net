@@ -1,6 +1,6 @@
 package TZ.Net.wo.UDP;
 
-import TZ.Listen.Reference.VarListe;
+import TZ.Base.Listen.Reference.VarListe;
 
 /**
  * The base class for UDP Anchor

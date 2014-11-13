@@ -1,7 +1,7 @@
 package TZ.Net.wo.UDP.Anchor;
 
+import TZ.Base.Listen.Reference.VarListe;
 import TZ.Core.Core;
-import TZ.Listen.Reference.VarListe;
 import TZ.Net.wo.UDP.UDPAnchor;
 
 public abstract class StdUDPAnchor<socket, input, output> implements UDPAnchor<socket, input, output> {

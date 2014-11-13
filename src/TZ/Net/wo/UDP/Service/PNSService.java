@@ -2,11 +2,11 @@ package TZ.Net.wo.UDP.Service;
 
 import java.net.DatagramPacket;
 
-import TZ.Listen.Alias.AL;
-import TZ.Listen.V5.AliasListe;
+import TZ.Base.Listen.Alias.AL;
+import TZ.Base.Listen.V5.AliasListe;
+import TZ.Base.V5.Strings.VarString;
 import TZ.Net.wo.UDP.Anchor.DatagramAnchor;
 import TZ.Net.wo.UDP.Packet.DataPacket;
-import TZ.V5.Strings.VarString;
 
 public class PNSService extends StdUDPService<DatagramPacket, DatagramPacket> {
 	

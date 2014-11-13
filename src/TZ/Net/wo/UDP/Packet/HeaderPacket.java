@@ -2,9 +2,9 @@ package TZ.Net.wo.UDP.Packet;
 
 import java.net.DatagramPacket;
 
-import TZ.Listen.Alias.AL;
-import TZ.Listen.Alias.AN;
-import TZ.Listen.V5.AliasListe;
+import TZ.Base.Listen.Alias.AL;
+import TZ.Base.Listen.Alias.AN;
+import TZ.Base.Listen.V5.AliasListe;
 import TZ.Net.IP;
 import TZ.Net.wo.UDP.UDPPacket;
 
@@ -40,10 +40,10 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	public void generateParse() {
 		this.header = AliasListe.create();
 		String s = new String(this.data, 0, this.length);
-		String[] content = s.split("§§");
+		String[] content = s.split("ï¿½ï¿½");
 		if (content.length == 2) {
 			this.setHeader(content[0]);
-		} else if (content.length == 1 && s.endsWith("§§")) {
+		} else if (content.length == 1 && s.endsWith("ï¿½ï¿½")) {
 			this.setHeader(s.substring(0, s.length() - 2));
 		} else {
 			this.header("type", HeaderPacket.TYPE);
@@ -86,7 +86,7 @@ public class HeaderPacket extends UDPP implements UDPPacket {
 	}
 	
 	protected String getDataString() {
-		return this.getHeader() + "§§" + new String(this.data, 0, this.data.length);
+		return this.getHeader() + "ï¿½ï¿½" + new String(this.data, 0, this.data.length);
 	}
 	
 	public DatagramPacket getPacket(DatagramPacket packet) {

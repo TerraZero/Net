@@ -6,8 +6,8 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import TZ.Listen.Liste.LN;
-import TZ.Listen.V5.Liste;
+import TZ.Base.Listen.Liste.LN;
+import TZ.Base.Listen.V5.Liste;
 import TZ.Net.IP;
 import TZ.Net.UDP.UDPProtocol;
 

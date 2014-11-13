@@ -2,9 +2,9 @@ package TZ.Net.wo.UDP.Packet;
 
 import java.net.DatagramPacket;
 
-import TZ.Listen.Alias.AL;
-import TZ.Listen.Alias.AN;
-import TZ.Listen.V5.AliasListe;
+import TZ.Base.Listen.Alias.AL;
+import TZ.Base.Listen.Alias.AN;
+import TZ.Base.Listen.V5.AliasListe;
 import TZ.Net.wo.UDP.UDPPacket;
 
 public class DataPacket extends HeaderPacket {
@@ -34,11 +34,11 @@ public class DataPacket extends HeaderPacket {
 		this.content = AliasListe.create();
 		if (this.data == null) return;
 		String s = new String(this.data, 0, this.length);
-		String[] content = s.split("§§");
+		String[] content = s.split("ï¿½ï¿½");
 		if (content.length == 2) {
 			this.setHeader(content[0]);
 			this.setContent(content[1]);
-		} else if (content.length == 1 && s.endsWith("§§")) {
+		} else if (content.length == 1 && s.endsWith("ï¿½ï¿½")) {
 			this.setHeader(s.substring(0, s.length() - 2));
 		} else {
 			this.header("type", DataPacket.TYPE);
@@ -81,7 +81,7 @@ public class DataPacket extends HeaderPacket {
 	}
 	
 	protected String getDataString() {
-		return this.getHeader() + "§§" + this.getContent();
+		return this.getHeader() + "ï¿½ï¿½" + this.getContent();
 	}
 	
 	public UDPPacket clear() {

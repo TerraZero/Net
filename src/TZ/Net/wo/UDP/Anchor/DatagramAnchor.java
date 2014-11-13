@@ -6,11 +6,11 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
-import TZ.Listen.Reference.VL;
-import TZ.Listen.Reference.VarInit;
+import TZ.Base.Listen.Reference.VL;
+import TZ.Base.Listen.Reference.VarInit;
+import TZ.Base.V5.Strings.Strings;
 import TZ.Net.IP;
 import TZ.Net.UDP.UDPParser;
-import TZ.V5.Strings.Strings;
 
 public class DatagramAnchor extends StdUDPAnchor<DatagramSocket, DatagramPacket, DatagramPacket> {
 	

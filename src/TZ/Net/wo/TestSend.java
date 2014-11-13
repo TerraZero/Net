@@ -2,11 +2,11 @@ package TZ.Net.wo;
 
 import java.net.DatagramPacket;
 
+import TZ.Base.V5.Input;
 import TZ.Core.Core;
 import TZ.Net.IP;
 import TZ.Net.UDP.Anchor.DatagramAnchor;
 import TZ.Net.UDP.Protocol.SimpleProtocol;
-import TZ.V5.Input;
 
 public class TestSend {
 
